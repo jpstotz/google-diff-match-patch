@@ -1477,8 +1477,8 @@ public final class DiffMatchPatch
 	}
 
 	/**
-	 * loc is a location in text1, compute and return the equivalent location in text2. e.g. "The cat" vs "The big cat",
-	 * 1->1, 5->8
+	 * {@code loc} is a location in text1, compute and return the equivalent location in text2. e.g. "The cat" vs "The big
+	 * cat", {@code 1->1}, {@code 5->8}
 	 * <p>
 	 * @param diffs LinkedList of Diff objects.
 	 * @param loc   Location within text1.
@@ -1625,8 +1625,8 @@ public final class DiffMatchPatch
 
 	/**
 	 * Crush the diff into an encoded string which describes the operations required to transform text1 into text2. E.g.
-	 * =3\t-2\t+ing -> Keep 3 chars, delete 2 chars, insert 'ing'. Operations are tab-separated. Inserted text is escaped
-	 * using %xx notation.
+	 * {@code =3\t-2\t+ing ->} Keep 3 chars, delete 2 chars, insert 'ing'. Operations are tab-separated. Inserted text is
+	 * escaped using %xx notation.
 	 * <p>
 	 * @param diffs Array of Diff objects.
 	 * @return Delta text.
@@ -2075,8 +2075,8 @@ public final class DiffMatchPatch
 	 * @param text2 Ignored.
 	 * @param diffs Array of Diff objects for text1 to text2.
 	 * @return LinkedList of Patch objects.
-	 * @deprecated Prefer {@link patchMake(String text1, LinkedList<Diff>
-	 * diffs)}.
+	 * @deprecated Prefer
+	 * {@link #patchMake(java.lang.String, java.util.LinkedList) patchMake(String text1, LinkedList diffs)}.
 	 */
 	@Deprecated
 	public LinkedList<Patch> patchMake(String text1, String text2,
