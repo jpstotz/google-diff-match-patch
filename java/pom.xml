@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>org.bitbucket.cowwoc</groupId>
 	<artifactId>diff-match-patch</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<name>diff-match-patch</name>
 	<description>A Java library for performing the operations required for synchronizing plain text.</description>
@@ -29,7 +29,7 @@
 		<url>https://bitbucket.org/cowwoc/google-diff-match-patch/</url>
 		<connection>scm:hg:https://bitbucket.org/cowwoc/google-diff-match-patch/</connection>
 		<developerConnection>scm:hg:https://bitbucket.org/cowwoc/google-diff-match-patch/</developerConnection>
-		<tag>HEAD</tag>
+		<tag>release-1.1</tag>
 	</scm>
 
 	<developers>
