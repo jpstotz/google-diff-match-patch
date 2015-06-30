@@ -85,7 +85,6 @@ public final class DiffMatchPatch
 	 */
 	static class LinesToCharsResult
 	{
-
 		final String chars1;
 		final String chars2;
 		final List<String> lineArray;
@@ -2703,7 +2702,6 @@ public final class DiffMatchPatch
 	 */
 	public static class Diff
 	{
-
 		/**
 		 * One of: INSERT, DELETE or EQUAL.
 		 */
@@ -2797,7 +2795,6 @@ public final class DiffMatchPatch
 	 */
 	public static class Patch
 	{
-
 		public LinkedList<Diff> diffs;
 		public int start1;
 		public int start2;
