@@ -1,8 +1,7 @@
 /*
  * Diff Match and Patch
- *
- * Copyright 2011 Google Inc.
- * http://code.google.com/p/google-diff-match-patch/
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +36,9 @@ class Patch {
   }
 
   /**
-   * Emmulate GNU diff's format.
+   * Emulate GNU diff's format.
    * Header: @@ -382,8 +481,9 @@
-   * Indicies are printed as 1-based, not 0-based.
+   * Indices are printed as 1-based, not 0-based.
    * Returns the GNU diff string.
    */
   String toString() {
@@ -62,17 +61,18 @@ class Patch {
     // Escape the body of the patch with %xx notation.
     for (Diff aDiff in this.diffs) {
       switch (aDiff.operation) {
-      case DIFF_INSERT:
-        text.add('+');
-        break;
-      case DIFF_DELETE:
-        text.add('-');
-        break;
-      case DIFF_EQUAL:
-        text.add(' ');
-        break;
+        case Operation.insert:
+          text.write('+');
+          break;
+        case Operation.delete:
+          text.write('-');
+          break;
+        case Operation.equal:
+          text.write(' ');
+          break;
       }
-      text.add(encodeUri(aDiff.text)).add('\n');
+      text.write(Uri.encodeFull(aDiff.text));
+      text.write('\n');
     }
     return text.toString().replaceAll('%20', ' ');
   }

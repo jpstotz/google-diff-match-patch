@@ -1,7 +1,7 @@
 /*
- * Copyright 2008 Google Inc. All Rights Reserved.
- * Author: fraser@google.com (Neil Fraser)
- * Author: mikeslemmer@gmail.com (Mike Slemmer)
+ * Diff Match and Patch -- Test Harness
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Diff Match and Patch -- Test Harness
- * http://code.google.com/p/google-diff-match-patch/
  */
 
 #ifndef DIFF_MATCH_PATCH_TEST_H

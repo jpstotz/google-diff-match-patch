@@ -1,8 +1,7 @@
 /*
  * Diff Match and Patch
- *
- * Copyright 2011 Google Inc.
- * http://code.google.com/p/google-diff-match-patch/
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +23,9 @@ part of DiffMatchPatch;
  */
 class Diff {
   /**
-   * One of: DIFF_INSERT, DIFF_DELETE or DIFF_EQUAL.
+   * One of: Operation.insert, Operation.delete or Operation.equal.
    */
-  int operation;
+  Operation operation;
   /**
    * The text associated with this diff operation.
    */
@@ -34,7 +33,7 @@ class Diff {
 
   /**
    * Constructor.  Initializes the diff with the provided values.
-   * [operation] is one of DIFF_INSERT, DIFF_DELETE or DIFF_EQUAL.
+   * [operation] is one of Operation.insert, Operation.delete or Operation.equal.
    * [text] is the text being applied.
    */
   Diff(this.operation, this.text);

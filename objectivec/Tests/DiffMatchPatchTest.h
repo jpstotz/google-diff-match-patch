@@ -1,8 +1,7 @@
 /*
- * Diff Match and Patch
- *
- * Copyright 2010 geheimwerk.de.
- * http://code.google.com/p/google-diff-match-patch/
+ * Diff Match and Patch -- Test harness
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +19,9 @@
  * ObjC port: jan@geheimwerk.de (Jan Weiß)
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "DiffMatchPatch.h"
 
-
-@interface DiffMatchPatchTest : SenTestCase {
-
-}
-
+@interface DiffMatchPatchTest : XCTestCase
 @end

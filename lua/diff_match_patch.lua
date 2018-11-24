@@ -1,8 +1,7 @@
 --[[
 * Diff Match and Patch
-*
-* Copyright 2006 Google Inc.
-* http://code.google.com/p/google-diff-match-patch/
+* Copyright 2018 The diff-match-patch Authors.
+* https://github.com/google/diff-match-patch
 *
 * Based on the JavaScript implementation by Neil Fraser.
 * Ported to Lua by Duncan Cross.
@@ -23,7 +22,7 @@
 --[[
 -- Lua 5.1 and earlier requires the external BitOp library.
 -- This library is built-in from Lua 5.2 and later as 'bit32'.
-require 'bit'   -- <http://bitop.luajit.org/>
+require 'bit'   -- <https://bitop.luajit.org/>
 local band, bor, lshift
     = bit.band, bit.bor, bit.lshift
 --]]
@@ -50,21 +49,6 @@ local clock = os.clock
 local percentEncode_pattern = '[^A-Za-z0-9%-=;\',./~!@#$%&*%(%)_%+ %?]'
 local function percentEncode_replace(v)
   return strformat('%%%02X', strbyte(v))
-end
-
-local function tsplice(t, idx, deletions, ...)
-  local insertions = select('#', ...)
-  for i = 1, deletions do
-    tremove(t, idx)
-  end
-  for i = insertions, 1, -1 do
-    -- do not remove parentheses around select
-    tinsert(t, idx, (select(i, ...)))
-  end
-end
-
-local function strelement(str, i)
-  return strsub(str, i, i)
 end
 
 local function indexOf(a, b, start)
@@ -247,7 +231,7 @@ function diff_cleanupSemantic(diffs)
   local changes = false
   local equalities = {}  -- Stack of indices where equalities are found.
   local equalitiesLength = 0  -- Keeping our own length var is faster.
-  local lastequality = nil
+  local lastEquality = nil
   -- Always equal to diffs[equalities[equalitiesLength]][2]
   local pointer = 1  -- Index of current position.
   -- Number of characters that changed prior to the equality.
@@ -265,7 +249,7 @@ function diff_cleanupSemantic(diffs)
       length_deletions1 = length_deletions2
       length_insertions2 = 0
       length_deletions2 = 0
-      lastequality = diffs[pointer][2]
+      lastEquality = diffs[pointer][2]
     else  -- An insertion or deletion.
       if diffs[pointer][1] == DIFF_INSERT then
         length_insertions2 = length_insertions2 + #(diffs[pointer][2])
@@ -274,12 +258,12 @@ function diff_cleanupSemantic(diffs)
       end
       -- Eliminate an equality that is smaller or equal to the edits on both
       -- sides of it.
-      if lastequality
-          and (#lastequality <= max(length_insertions1, length_deletions1))
-          and (#lastequality <= max(length_insertions2, length_deletions2)) then
+      if lastEquality
+          and (#lastEquality <= max(length_insertions1, length_deletions1))
+          and (#lastEquality <= max(length_insertions2, length_deletions2)) then
         -- Duplicate record.
         tinsert(diffs, equalities[equalitiesLength],
-         {DIFF_DELETE, lastequality})
+         {DIFF_DELETE, lastEquality})
         -- Change second copy to insert.
         diffs[equalities[equalitiesLength] + 1][1] = DIFF_INSERT
         -- Throw away the equality we just deleted.
@@ -289,7 +273,7 @@ function diff_cleanupSemantic(diffs)
         pointer = (equalitiesLength > 0) and equalities[equalitiesLength] or 0
         length_insertions1, length_deletions1 = 0, 0  -- Reset the counters.
         length_insertions2, length_deletions2 = 0, 0
-        lastequality = nil
+        lastEquality = nil
         changes = true
       end
     end
@@ -358,7 +342,7 @@ function diff_cleanupEfficiency(diffs)
   -- Keeping our own length var is faster.
   local equalitiesLength = 0
   -- Always equal to diffs[equalities[equalitiesLength]][2]
-  local lastequality = nil
+  local lastEquality = nil
   -- Index of current position.
   local pointer = 1
 
@@ -386,11 +370,11 @@ function diff_cleanupEfficiency(diffs)
         equalitiesLength = equalitiesLength + 1
         equalities[equalitiesLength] = pointer
         pre_ins, pre_del = post_ins, post_del
-        lastequality = diffText
+        lastEquality = diffText
       else
         -- Not a candidate, and can never become one.
         equalitiesLength = 0
-        lastequality = nil
+        lastEquality = nil
       end
       post_ins, post_del = 0, 0
     else  -- An insertion or deletion.
@@ -407,22 +391,22 @@ function diff_cleanupEfficiency(diffs)
       * <ins>A</del>X<ins>C</ins><del>D</del>
       * <ins>A</ins><del>B</del>X<del>C</del>
       --]]
-      if lastequality and (
+      if lastEquality and (
           (pre_ins+pre_del+post_ins+post_del == 4)
           or
           (
-            (#lastequality < Diff_EditCost / 2)
+            (#lastEquality < Diff_EditCost / 2)
             and
             (pre_ins+pre_del+post_ins+post_del == 3)
           )) then
         -- Duplicate record.
         tinsert(diffs, equalities[equalitiesLength],
-            {DIFF_DELETE, lastequality})
+            {DIFF_DELETE, lastEquality})
         -- Change second copy to insert.
         diffs[equalities[equalitiesLength] + 1][1] = DIFF_INSERT
         -- Throw away the equality we just deleted.
         equalitiesLength = equalitiesLength - 1
-        lastequality = nil
+        lastEquality = nil
         if (pre_ins == 1) and (pre_del == 1) then
           -- No changes made which could affect previous entry, keep going.
           post_ins, post_del = 1, 1
@@ -624,7 +608,7 @@ function _diff_bisect(text1, text2, deadline)
       end
       local y1 = x1 - k1
       while (x1 <= text1_length) and (y1 <= text2_length)
-          and (strelement(text1, x1) == strelement(text2, y1)) do
+          and (strsub(text1, x1, x1) == strsub(text2, y1, y1)) do
         x1 = x1 + 1
         y1 = y1 + 1
       end
@@ -660,7 +644,7 @@ function _diff_bisect(text1, text2, deadline)
       end
       local y2 = x2 - k2
       while (x2 <= text1_length) and (y2 <= text2_length)
-          and (strelement(text1, -x2) == strelement(text2, -y2)) do
+          and (strsub(text1, -x2, -x2) == strsub(text2, -y2, -y2)) do
         x2 = x2 + 1
         y2 = y2 + 1
       end
@@ -733,7 +717,7 @@ function _diff_commonPrefix(text1, text2)
     return 0
   end
   -- Binary search.
-  -- Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  -- Performance analysis: https://neil.fraser.name/news/2007/10/09/
   local pointermin = 1
   local pointermax = min(#text1, #text2)
   local pointermid = pointermax
@@ -764,7 +748,7 @@ function _diff_commonSuffix(text1, text2)
     return 0
   end
   -- Binary search.
-  -- Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  -- Performance analysis: https://neil.fraser.name/news/2007/10/09/
   local pointermin = 1
   local pointermax = min(#text1, #text2)
   local pointermid = pointermax
@@ -812,7 +796,7 @@ function _diff_commonOverlap(text1, text2)
 
   -- Start by looking for a single character match
   -- and increase length until no match is found.
-  -- Performance analysis: http://neil.fraser.name/news/2010/11/04/
+  -- Performance analysis: https://neil.fraser.name/news/2010/11/04/
   local best = 0
   local length = 1
   while true do
@@ -1090,25 +1074,25 @@ function _diff_cleanupMerge(diffs)
           commonlength = _diff_commonSuffix(text_insert, text_delete)
           if commonlength ~= 0 then
             diffs[pointer][2] =
-            strsub(text_insert, -commonlength) .. diffs[pointer][2]
+                strsub(text_insert, -commonlength) .. diffs[pointer][2]
             text_insert = strsub(text_insert, 1, -commonlength - 1)
             text_delete = strsub(text_delete, 1, -commonlength - 1)
           end
         end
         -- Delete the offending records and add the merged ones.
-        if count_delete == 0 then
-          tsplice(diffs, pointer - count_insert,
-          count_insert, {DIFF_INSERT, text_insert})
-        elseif count_insert == 0 then
-          tsplice(diffs, pointer - count_delete,
-          count_delete, {DIFF_DELETE, text_delete})
-        else
-          tsplice(diffs, pointer - count_delete - count_insert,
-          count_delete + count_insert,
-          {DIFF_DELETE, text_delete}, {DIFF_INSERT, text_insert})
-        end
         pointer = pointer - count_delete - count_insert
-            + (count_delete>0 and 1 or 0) + (count_insert>0 and 1 or 0) + 1
+        for i = 1, count_delete + count_insert do
+          tremove(diffs, pointer)
+        end
+        if #text_delete > 0 then
+          tinsert(diffs, pointer, {DIFF_DELETE, text_delete})
+          pointer = pointer + 1
+        end
+        if #text_insert > 0 then
+          tinsert(diffs, pointer, {DIFF_INSERT, text_insert})
+          pointer = pointer + 1
+        end
+        pointer = pointer + 1
       elseif (pointer > 1) and (diffs[pointer - 1][1] == DIFF_EQUAL) then
         -- Merge this equality with the previous one.
         diffs[pointer - 1][2] = diffs[pointer - 1][2] .. diffs[pointer][2]
@@ -1138,7 +1122,10 @@ function _diff_cleanupMerge(diffs)
       local currentText = diff[2]
       local prevText = prevDiff[2]
       local nextText = nextDiff[2]
-      if strsub(currentText, -#prevText) == prevText then
+      if #prevText == 0 then
+        tremove(diffs, pointer - 1)
+        changes = true
+      elseif strsub(currentText, -#prevText) == prevText then
         -- Shift the edit over the previous equality.
         diff[2] = prevText .. strsub(currentText, 1, -#prevText - 1)
         nextDiff[2] = prevText .. nextDiff[2]
@@ -1606,7 +1593,7 @@ function patch_make(a, opt_b, opt_c)
           patch = _new_patch_obj()
           patchDiffLength = 0
           -- Unlike Unidiff, our patch lists have a rolling context.
-          -- http://code.google.com/p/google-diff-match-patch/wiki/Unidiff
+          -- https://github.com/google/diff-match-patch/wiki/Unidiff
           -- Update prepatch text & pos to reflect the application of the
           -- just completed patch.
           prepatch_text = postpatch_text

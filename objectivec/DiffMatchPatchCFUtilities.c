@@ -1,8 +1,7 @@
 /*
  * Diff Match and Patch
- *
- * Copyright 2010 geheimwerk.de.
- * http://code.google.com/p/google-diff-match-patch/
+ * Copyright 2018 The diff-match-patch Authors.
+ * https://github.com/google/diff-match-patch
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +153,7 @@ Boolean diff_regExMatch(CFStringRef text, const regex_t *re) {
  * @return The number of characters common to the start of each string.
  */
 CFIndex diff_commonPrefix(CFStringRef text1, CFStringRef text2) {
-  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  // Performance analysis: https://neil.fraser.name/news/2007/10/09/
   CFIndex text1_length = CFStringGetLength(text1);
   CFIndex text2_length = CFStringGetLength(text2);
 
@@ -184,7 +183,7 @@ CFIndex diff_commonPrefix(CFStringRef text1, CFStringRef text2) {
  * @return The number of characters common to the end of each string.
  */
 CFIndex diff_commonSuffix(CFStringRef text1, CFStringRef text2) {
-  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+  // Performance analysis: https://neil.fraser.name/news/2007/10/09/
   CFIndex text1_length = CFStringGetLength(text1);
   CFIndex text2_length = CFStringGetLength(text2);
 
@@ -254,7 +253,7 @@ CFIndex diff_commonOverlap(CFStringRef text1, CFStringRef text2) {
   } else {
     // Start by looking for a single character match
     // and increase length until no match is found.
-    // Performance analysis: http://neil.fraser.name/news/2010/11/04/
+    // Performance analysis: https://neil.fraser.name/news/2010/11/04/
     CFIndex best = 0;
     CFIndex length = 1;
     while (true) {
@@ -451,9 +450,10 @@ CFArrayRef diff_halfMatchICreate(CFStringRef longtext, CFStringRef shorttext, CF
  * @param text CFString to encode.
  * @param lineArray CFMutableArray of unique strings.
  * @param lineHash Map of strings to indices.
+ * @param maxLines Maximum length for lineArray.
  * @return Encoded CFStringRef.
  */
-CFStringRef diff_linesToCharsMungeCFStringCreate(CFStringRef text, CFMutableArrayRef lineArray, CFMutableDictionaryRef lineHash) {
+CFStringRef diff_linesToCharsMungeCFStringCreate(CFStringRef text, CFMutableArrayRef lineArray, CFMutableDictionaryRef lineHash, CFIndex maxLines) {
   #define lineStart lineStartRange.location
   #define lineEnd lineEndRange.location
 
@@ -481,7 +481,6 @@ CFStringRef diff_linesToCharsMungeCFStringCreate(CFStringRef text, CFMutableArra
     }*/
 
     line = diff_CFStringCreateJavaSubstring(text, lineStart, lineEnd + 1);
-    lineStart = lineEnd + 1;
 
     if (CFDictionaryContainsKey(lineHash, line)) {
       CFDictionaryGetValueIfPresent(lineHash, line, (const void **)&hashNumber);
@@ -489,6 +488,11 @@ CFStringRef diff_linesToCharsMungeCFStringCreate(CFStringRef text, CFMutableArra
       const UniChar hashChar = (UniChar)hash;
       CFStringAppendCharacters(chars, &hashChar, 1);
     } else {
+      if (CFArrayGetCount(lineArray) == maxLines) {
+        // Bail out at 65535 because char 65536 == char 0.
+        line = diff_CFStringCreateJavaSubstring(text, lineStart, textLength);
+        lineEnd = textLength;
+      }
       CFArrayAppendValue(lineArray, line);
       hash = CFArrayGetCount(lineArray) - 1;
       hashNumber = CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &hash);
@@ -498,6 +502,7 @@ CFStringRef diff_linesToCharsMungeCFStringCreate(CFStringRef text, CFMutableArra
       const UniChar hashChar = (UniChar)hash;
       CFStringAppendCharacters(chars, &hashChar, 1);
     }
+    lineStart = lineEnd + 1;
 
     CFRelease(line);
   }
